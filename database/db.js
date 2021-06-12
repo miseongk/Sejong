@@ -1,5 +1,4 @@
 const mysql = require("mysql2/promise");
-const config = require("../config/config.json");
 
 const _query = async (raw_query) => {
   const connection = await mysql.createConnection({
