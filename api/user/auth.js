@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const config = require("../../config/config.json");
 const webdriver = require("selenium-webdriver");
 const chrome = require("selenium-webdriver/chrome");
 const path = require("chromedriver").path;
@@ -111,8 +110,7 @@ router.post("/signin", async (req, res) => {
       {
         student_id: query_response.data.student_id,
       },
-      // process.env.SECRET_KEY,
-      config.secret,
+      process.env.SECRET_KEY,
       {
         expiresIn: "12h",
       },
