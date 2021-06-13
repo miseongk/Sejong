@@ -5,7 +5,7 @@ const _auth = (req, res, next) => {
     req.decoded = jwt.verify(req.headers.authorization, process.env.SECRET_KEY);
 
     if (req.decoded) {
-      res.locals.user_id = req.decoded.user_id;
+      res.locals.student_id = req.decoded.student_id;
       return next();
     }
   } catch (error) {
