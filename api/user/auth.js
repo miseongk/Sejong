@@ -108,7 +108,7 @@ router.post("/signin", async (req, res) => {
 
     query_response.token = jwt.sign(
       {
-        student_id: query_response.data[0].student_id,
+        student_id: student_id,
       },
       process.env.SECRET_KEY,
       {
