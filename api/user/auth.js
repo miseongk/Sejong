@@ -17,6 +17,7 @@ const uis_login = async (id, pw) => {
   options.ignoreSynchronization = true;
   //options.setMobileEmulation({ deviceName: "Google Nexus 5" });
   options.headless();
+  options.addArguments("--no-sandbox");
 
   const chromeCapabilities = webdriver.Capabilities.chrome();
   chromeCapabilities.set("ChromeOptions", options);
