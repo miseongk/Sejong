@@ -97,7 +97,6 @@ router.post("/signin", async (req, res) => {
     query_response.data = await _query(
       `SELECT student_id,name FROM User WHERE student_id=${student_id};`
     );
-    console.log(query_response);
     //DB 추가
     if (query_response.data.length == 0) {
       await _query(`INSERT INTO User (student_id) VALUES (${student_id});`);
@@ -108,7 +107,7 @@ router.post("/signin", async (req, res) => {
 
     query_response.token = jwt.sign(
       {
-        student_id: query_response.data.student_id,
+        student_id: query_response.data[0].student_id,
       },
       process.env.SECRET_KEY,
       {
