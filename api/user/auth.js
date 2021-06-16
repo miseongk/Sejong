@@ -75,6 +75,9 @@ const uis_login = async (id, pw) => {
       const $ = cheerio.load(html);
       major = $("li:nth-child(1) dl dd", ".tblA").text();
       name = $("li:nth-child(3) dl dd", ".tblA").text();
+      if (major === "" && name === "") {
+        message = "Login failed";
+      }
     } catch (e) {}
     try {
       await driver.wait(() => {
