@@ -16,6 +16,9 @@ const uis_login = async (id, pw) => {
   const options = new chrome.Options();
   options.excludeSwitches("enable-logging");
   options.ignoreSynchronization = true;
+  options.setMobileEmulation({
+    deviceMetrics: { width: 360, height: 640, pixelRatio: 3 },
+  });
   options.addArguments("--no-sandbox");
   options.addArguments("--window-size=1920,1080");
   options.headless();
