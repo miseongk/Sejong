@@ -55,6 +55,12 @@ const uis_login = async (id, pw) => {
 
     await driver.findElement(By.id("loginBtn")).click();
 
+    try {
+      await driver.wait(() => {
+        return false;
+      }, 2000);
+    } catch (err) {}
+
     //학과, 이름 가져오기
     try {
       await driver.switchTo().frame(0);
