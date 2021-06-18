@@ -2,7 +2,6 @@ const express = require("express");
 const http = require("http");
 const socketio = require("socket.io");
 const bodyparser = require("body-parser");
-//require("dotenv").config();
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
@@ -12,6 +11,7 @@ const API_HOST = process.env.API_HOST || "localhost";
 const API_ROOT = "/api/v1/";
 
 const auth = require("./api/user/auth");
+const post = require("./api/post/post");
 const chat = require("./api/chat/chat");
 const middleware = require("./api/middleware/middleware");
 
@@ -20,23 +20,13 @@ app.use(bodyparser.urlencoded({ extended: true }));
 app.use(middleware._log);
 
 app.use(API_ROOT, auth);
+app.use(API_ROOT, post);
 app.use(API_ROOT, chat);
 
 require("./api/chat/socket")(app, io);
 
-app.get("/", (req, res) => {
-  res.send("hello!!");
-});
 app.listen(API_PORT, API_HOST, () => {
   console.log(
     `Sejong Mentoring System running at http://${API_HOST}:${API_PORT}`
   );
 });
-
-// if (process.env.NODE_ENV === "production") {
-//   dotenv.config(".env");
-// } else if (process.env.NODE_ENV === "develop") {
-//   dotenv.config(".env.dev");
-// } else {
-//   throw new Error("process.env.NODE_ENV를 설정하지 않았습니다!");
-// }
