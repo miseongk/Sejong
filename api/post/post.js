@@ -19,11 +19,13 @@ router.post("/post", middleware._auth, async (req, res) => {
   const content = req.body.content;
 
   try {
-    await _query(
-      `INSERT INTO Post (student_id, role, subject, level, start_date, end_date, time, day, content)
-            VALUES (${writer}, '${role}', '${subject}', '${level}', '${start_date}','${end_date}', '${time}', '${day}', '${content}');`
+    const name = await _query(
+      `SELECT name FROM User WHERE student_id = ${writer};`
     );
-
+    await _query(
+      `INSERT INTO Post (student_id, name, role, subject, level, start_date, end_date, time, day, content)
+            VALUES (${writer}, '${name[0].name}', '${role}', '${subject}', '${level}', '${start_date}','${end_date}', '${time}', '${day}', '${content}');`
+    );
     query_response.data = req.body;
   } catch (error) {
     res.status(400);
@@ -44,15 +46,50 @@ router.get("/post/:post_id", middleware._auth, async (req, res) => {
       res.status(400);
       query_response.message = `Post id '${post_id}' doesn't exist.`;
     } else {
-      const name = await _query(
-        `SELECT name FROM User WHERE student_id = ${post[0].student_id};`
-      );
       query_response.data = post;
-      query_response.data[0].name = name[0].name;
     }
   } catch (error) {
     res.status(400);
     query_response.message = `Failed to get a post with post id '${post_id}'.`;
+  }
+
+  res.send(query_response);
+});
+
+// Get a list of posts
+router.get("/post/:role/list", middleware._auth, async (req, res) => {
+  let query_response = {};
+
+  const params = req.params.role;
+  const page = req.query.page - 1;
+  const limit = 9;
+  let role = "";
+  let posts = {};
+
+  if (params === "mentee") {
+    role = "멘티";
+  } else if (params === "mentor") {
+    role = "멘토";
+  }
+
+  try {
+    if (role == "멘토" || role == "멘티") {
+      posts = await _query(
+        `SELECT id, name, subject, level, start_date, end_date, time, day, created_at FROM Post
+      WHERE role = '${role}' AND is_matched = 0 
+      ORDER BY created_at desc LIMIT ${page * limit}, ${limit};`
+      );
+    } else {
+      posts = await _query(
+        `SELECT p.id, p.name, p.subject, p.level, p.start_date, p.end_date, p.time, p.day, p.created_at, u.reputation
+        FROM Post as p JOIN User as u ON p.student_id = u.student_id AND p.role="멘토"
+        ORDER BY u.reputation desc LIMIT ${page * limit}, ${limit};`
+      );
+    }
+    query_response.data = posts;
+  } catch (error) {
+    res.status(400);
+    query_response.message = "Failed to get a list of posts.";
   }
 
   res.send(query_response);
