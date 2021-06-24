@@ -12,6 +12,7 @@ const API_ROOT = "/api/v1/";
 
 const auth = require("./api/user/auth");
 const post = require("./api/post/post");
+const profile = require("./api/user/profile");
 const chat = require("./api/chat/chat");
 const middleware = require("./api/middleware/middleware");
 
@@ -21,6 +22,7 @@ app.use(middleware._log);
 
 app.use(API_ROOT, auth);
 app.use(API_ROOT, post);
+app.use(API_ROOT, profile);
 app.use(API_ROOT, chat);
 
 require("./api/chat/socket")(app, io);
