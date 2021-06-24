@@ -101,10 +101,11 @@ router.post("/signin", async (req, res) => {
   //로그인 성공
   if (login_result.message == "Login success") {
     query_response.data = await _query(
-      `SELECT student_id, name, major FROM User WHERE student_id=${student_id};`
+      `SELECT student_id, name, major, gender FROM User WHERE student_id=${student_id};`
     );
     //DB 추가
     if (query_response.data.length == 0) {
+      query_response.data.is_visited = "no";
       await _query(
         `INSERT INTO User (student_id, name, major) VALUES (${student_id}, '${login_result.name}', '${login_result.major}');`
       );
@@ -112,6 +113,7 @@ router.post("/signin", async (req, res) => {
         student_id: student_id,
         name: login_result.name,
         major: login_result.major,
+        gender: "NULL",
       };
     }
     query_response.token = jwt.sign(
