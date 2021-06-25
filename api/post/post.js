@@ -25,7 +25,7 @@ router.post("/post", middleware._auth, async (req, res) => {
     );
     await _query(
       `INSERT INTO Post (student_id, name, role, subject, level, start_date, end_date, time, day, content)
-            VALUES (${writer}, '${name[0].name}', '${role}', '${subject}', '${level}', '${start_date}','${end_date}', '${time}', '${day}', '${content}');`
+            VALUES (${writer}, '${name[0].name}', ${role}, '${subject}', '${level}', '${start_date}','${end_date}', '${time}', '${day}', '${content}');`
     );
     query_response.data = req.body;
   } catch (error) {
