@@ -15,7 +15,8 @@ router.post("/post", middleware._auth, async (req, res) => {
   const start_date = req.body.start_date;
   const end_date = req.body.end_date;
   const time = req.body.time;
-  const day = req.body.day;
+  const day_arr = req.body.day;
+  const day = day_arr.join(" ");
   const content = req.body.content;
 
   try {
