@@ -64,26 +64,26 @@ router.get("/post/:role/list", middleware._auth, async (req, res) => {
   const params = req.params.role;
   const page = req.query.page - 1;
   const limit = 9;
-  let role = "";
+  let role = 0;
   let posts = {};
 
   if (params === "mentee") {
-    role = "멘티";
+    role = 2;
   } else if (params === "mentor") {
-    role = "멘토";
+    role = 1;
   }
 
   try {
-    if (role == "멘토" || role == "멘티") {
+    if (role == 1 || role == 2) {
       posts = await _query(
         `SELECT id, name, subject, level, start_date, end_date, time, day, created_at FROM Post
-      WHERE role = '${role}' AND is_matched = 0 
+      WHERE role = ${role} AND is_matched = 0 
       ORDER BY created_at desc LIMIT ${page * limit}, ${limit};`
       );
     } else {
       posts = await _query(
         `SELECT p.id, p.name, p.subject, p.level, p.start_date, p.end_date, p.time, p.day, p.created_at, u.reputation
-        FROM Post as p JOIN User as u ON p.student_id = u.student_id AND p.role="멘토"
+        FROM Post as p JOIN User as u ON p.student_id = u.student_id AND p.role=1
         ORDER BY u.reputation desc LIMIT ${page * limit}, ${limit};`
       );
     }
