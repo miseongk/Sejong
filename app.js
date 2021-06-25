@@ -14,6 +14,7 @@ const auth = require("./api/user/auth");
 const post = require("./api/post/post");
 const profile = require("./api/user/profile");
 const chat = require("./api/chat/chat");
+const search = require("./api/search/search");
 const middleware = require("./api/middleware/middleware");
 
 app.use(bodyparser.json());
@@ -24,6 +25,7 @@ app.use(API_ROOT, auth);
 app.use(API_ROOT, post);
 app.use(API_ROOT, profile);
 app.use(API_ROOT, chat);
+app.use(API_ROOT, search);
 
 require("./api/chat/socket")(app, io);
 
