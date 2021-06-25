@@ -36,27 +36,6 @@ router.post("/post", middleware._auth, async (req, res) => {
   res.send(query_response);
 });
 
-// Get a detail page of a post
-router.get("/post/:post_id", middleware._auth, async (req, res) => {
-  let query_response = {};
-
-  const post_id = req.params.post_id;
-  try {
-    const post = await _query(`SELECT * FROM Post WHERE id = ${post_id};`);
-    if (post.length === 0) {
-      res.status(400);
-      query_response.message = `Post id '${post_id}' doesn't exist.`;
-    } else {
-      query_response.data = post;
-    }
-  } catch (error) {
-    res.status(400);
-    query_response.message = `Failed to get a post with post id '${post_id}'.`;
-  }
-
-  res.send(query_response);
-});
-
 // Get a list of posts
 router.get("/post/:role/list", middleware._auth, async (req, res) => {
   let query_response = {};
@@ -76,14 +55,12 @@ router.get("/post/:role/list", middleware._auth, async (req, res) => {
   try {
     if (role == 1 || role == 2) {
       posts = await _query(
-        `SELECT id, name, subject, level, start_date, end_date, time, day, created_at FROM Post
-      WHERE role = ${role} AND is_matched = 0 
-      ORDER BY created_at desc LIMIT ${page * limit}, ${limit};`
+        `SELECT * FROM Post WHERE role = ${role} AND is_matched = 0 
+        ORDER BY created_at desc LIMIT ${page * limit}, ${limit};`
       );
     } else {
       posts = await _query(
-        `SELECT p.id, p.name, p.subject, p.level, p.start_date, p.end_date, p.time, p.day, p.created_at, u.reputation
-        FROM Post as p JOIN User as u ON p.student_id = u.student_id AND p.role=1
+        `SELECT p.*, u.reputation FROM Post as p JOIN User as u ON p.student_id = u.student_id AND p.role=1
         ORDER BY u.reputation desc LIMIT ${page * limit}, ${limit};`
       );
     }
