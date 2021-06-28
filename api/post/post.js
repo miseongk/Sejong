@@ -76,23 +76,25 @@ router.put("/post/:post_id", middleware._auth, async (req, res) => {
 router.delete("/post/:post_id", middleware._auth, async (req, res) => {
   let query_response = {};
 
-  const user = res.locals.student_id;
-  const writer = await _query(
-    `SELECT student_id FROM Post WHERE id = ${req.params.post_id};`
+  //const user = res.locals.student_id;
+  const post = await _query(
+    `SELECT * FROM Post WHERE id = ${req.params.post_id};`
   );
 
-  if (writer.length == 0) {
+  if (post.length == 0) {
     res.status(400);
     query_response.message = `Post ID: '${req.params.post_id}' doesn't exist.`;
     return res.send(query_response);
   }
   try {
-    if (user === writer[0].student_id) {
-      await _query(`DELETE FROM Post WHERE id = ${req.params.post_id};`);
-      query_response.message = `Post ID: '${req.params.post_id}' has been deleted successfully.`;
-    } else {
-      query_response.message = `Post ID: '${req.params.post_id}' is not ${user}'s post.`;
-    }
+    await _query(`DELETE FROM Post WHERE id = ${req.params.post_id};`);
+    query_response.message = `Post ID: '${req.params.post_id}' has been deleted successfully.`;
+    // if (user === writer[0].student_id) {
+    //   await _query(`DELETE FROM Post WHERE id = ${req.params.post_id};`);
+    //   query_response.message = `Post ID: '${req.params.post_id}' has been deleted successfully.`;
+    // } else {
+    //   query_response.message = `Post ID: '${req.params.post_id}' is not ${user}'s post.`;
+    // }
   } catch (error) {
     res.status(400);
     query_response.message = "Failed to delete a post.";
