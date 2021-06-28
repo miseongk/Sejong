@@ -56,15 +56,18 @@ router.get("/profile/:student_id", middleware._auth, async (req, res) => {
 router.get("/profile/:student_id/posts", middleware._auth, async (req, res) => {
   let query_response = {};
 
+  const student = await _query(
+    `SELECT * FROM User WHERE student_id = ${req.params.student_id};`
+  );
+  if (student.length == 0) {
+    res.status(400);
+    query_response.message = `Student ID : '${req.params.student_id}' doesn't exist.`;
+    return res.send(query_response);
+  }
   try {
     const posts = await _query(
       `SELECT * FROM Post WHERE student_id = ${req.params.student_id} ORDER BY updated_at desc;`
     );
-    if (posts.length == 0) {
-      res.status(400);
-      query_response.message = `Student ID : '${req.params.student_id}' doesn't exist.`;
-      return res.send(query_response);
-    }
     query_response.data = posts;
   } catch (error) {
     res.status(400);
