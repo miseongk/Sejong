@@ -36,6 +36,42 @@ router.post("/post", middleware._auth, async (req, res) => {
   res.send(query_response);
 });
 
+// Update a post
+router.put("/post/:post_id", middleware._auth, async (req, res) => {
+  let query_response = {};
+
+  const role = req.body.role;
+  const subject = req.body.subject;
+  const level = req.body.level;
+  const start_date = req.body.start_date;
+  const end_date = req.body.end_date;
+  const time = req.body.time;
+  const day_arr = req.body.day;
+  const day = day_arr.join(" ");
+  const content = req.body.content;
+
+  try {
+    const post = await _query(
+      `SELECT * FROM Post WHERE id = ${req.params.post_id};`
+    );
+    if (post.length == 0) {
+      res.status(400);
+      query_response.message = `Post ID: '${req.params.post_id}' doesn't exist.`;
+      return res.send(query_response);
+    }
+    await _query(
+      `UPDATE Post SET role = ${role}, subject = '${subject}', level = '${level}', start_date = '${start_date}', end_date = '${end_date}',
+       time = '${time}', day = '${day}', content = '${content}' WHERE id = ${req.params.post_id};`
+    );
+    query_response.message = `Post ID: '${req.params.post_id}' has been updated successfully.`;
+  } catch (error) {
+    res.status(400);
+    query_response.message = "Failed to update a post.";
+  }
+
+  res.send(query_response);
+});
+
 // Get a list of posts
 router.get("/post/:role/list", middleware._auth, async (req, res) => {
   let query_response = {};
