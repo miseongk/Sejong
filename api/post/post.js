@@ -72,6 +72,35 @@ router.put("/post/:post_id", middleware._auth, async (req, res) => {
   res.send(query_response);
 });
 
+// Delete a post
+router.delete("/post/:post_id", middleware._auth, async (req, res) => {
+  let query_response = {};
+
+  const user = res.locals.student_id;
+  const writer = await _query(
+    `SELECT student_id FROM Post WHERE id = ${req.params.post_id};`
+  );
+
+  if (writer.length == 0) {
+    res.status(400);
+    query_response.message = `Post ID: '${req.params.post_id}' doesn't exist.`;
+    return res.send(query_response);
+  }
+  try {
+    if (user === writer[0].student_id) {
+      await _query(`DELETE FROM Post WHERE id = ${req.params.post_id};`);
+      query_response.message = `Post ID: '${req.params.post_id}' has been deleted successfully.`;
+    } else {
+      query_response.message = `Post ID: '${req.params.post_id}' is not ${user}'s post.`;
+    }
+  } catch (error) {
+    res.status(400);
+    query_response.message = "Failed to delete a post.";
+  }
+
+  res.send(query_response);
+});
+
 // Get a list of posts
 router.get("/post/:role/list", middleware._auth, async (req, res) => {
   let query_response = {};
