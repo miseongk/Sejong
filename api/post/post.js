@@ -27,7 +27,10 @@ router.post("/post", middleware._auth, async (req, res) => {
       `INSERT INTO Post (student_id, name, role, subject, level, start_date, end_date, time, day, content)
             VALUES (${writer}, '${name[0].name}', ${role}, '${subject}', '${level}', '${start_date}','${end_date}', '${time}', '${day}', '${content}');`
     );
-    query_response.data = req.body;
+    const post = await _query(
+      `SELECT * FROM Post WHERE id IN (SELECT MAX(id) FROM Post);`
+    );
+    query_response.data = post;
   } catch (error) {
     res.status(400);
     query_response.message = "Failed to upload a post.";
