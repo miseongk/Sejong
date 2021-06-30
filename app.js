@@ -3,7 +3,7 @@ const app = express();
 const http = require("http");
 const server = http.createServer(app);
 const socketio = require("socket.io");
-const io = socketio(server);
+const io = socketio(server).sockets;
 const bodyparser = require("body-parser");
 const cors = require("cors");
 

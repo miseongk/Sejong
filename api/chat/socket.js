@@ -1,4 +1,3 @@
-const express = require("express");
 const moment = require("moment");
 
 const _query = require("../../database/db");
