@@ -32,6 +32,7 @@ app.use(API_ROOT, search);
 //require("./api/chat/socket")(app, io);
 
 io.on("connection", (socket) => {
+  console.log("connect");
   console.log("user connected: ", socket.id);
   //const user2 = res.locals.student_id;
   socket.on("joinRoom", async ({ user1, user2 }) => {
