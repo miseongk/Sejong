@@ -62,8 +62,8 @@ io.on("connection", (socket) => {
   });
 });
 
-// app.listen(API_PORT, API_HOST, () => {
-//   console.log(
-//     `Sejong Mentoring System running at http://${API_HOST}:${API_PORT}`
-//   );
-// });
+app.listen(API_PORT, API_HOST, () => {
+  console.log(
+    `Sejong Mentoring System running at http://${API_HOST}:${API_PORT}`
+  );
+});
