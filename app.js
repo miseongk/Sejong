@@ -5,6 +5,7 @@ const server = http.createServer(app);
 const socketio = require("socket.io");
 const io = socketio(server);
 const bodyparser = require("body-parser");
+const cors = require("cors");
 
 const API_PORT = process.env.API_PORT || 3000;
 const API_HOST = process.env.API_HOST || "localhost";
