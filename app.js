@@ -23,11 +23,11 @@ app.use(bodyparser.urlencoded({ extended: true }));
 app.use(middleware._log);
 app.use(cors());
 
-app.use(API_ROOT, auth);
-app.use(API_ROOT, post);
-app.use(API_ROOT, profile);
-app.use(API_ROOT, chat);
-app.use(API_ROOT, search);
+// app.use(API_ROOT, auth);
+// app.use(API_ROOT, post);
+// app.use(API_ROOT, profile);
+// app.use(API_ROOT, chat);
+// app.use(API_ROOT, search);
 
 //require("./api/chat/socket")(app, io);
 
@@ -62,8 +62,8 @@ io.on("connection", (socket) => {
   });
 });
 
-app.listen(API_PORT, API_HOST, () => {
-  console.log(
-    `Sejong Mentoring System running at http://${API_HOST}:${API_PORT}`
-  );
-});
+// app.listen(API_PORT, API_HOST, () => {
+//   console.log(
+//     `Sejong Mentoring System running at http://${API_HOST}:${API_PORT}`
+//   );
+// });
