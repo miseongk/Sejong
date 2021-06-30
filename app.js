@@ -23,11 +23,11 @@ app.use(bodyparser.urlencoded({ extended: true }));
 app.use(middleware._log);
 app.use(cors());
 
-// app.use(API_ROOT, auth);
-// app.use(API_ROOT, post);
-// app.use(API_ROOT, profile);
-// app.use(API_ROOT, chat);
-// app.use(API_ROOT, search);
+app.use(API_ROOT, auth);
+app.use(API_ROOT, post);
+app.use(API_ROOT, profile);
+app.use(API_ROOT, chat);
+app.use(API_ROOT, search);
 
 //require("./api/chat/socket")(app, io);
 
