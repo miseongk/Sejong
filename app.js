@@ -29,38 +29,38 @@ app.use(API_ROOT, profile);
 app.use(API_ROOT, chat);
 app.use(API_ROOT, search);
 
-//require("./api/chat/socket")(app, io);
+require("./api/chat/socket")(app, io);
 
-io.on("connection", (socket) => {
-  console.log("connect");
-  console.log("user connected: ", socket.id);
-  //const user2 = res.locals.student_id;
-  socket.on("joinRoom", async ({ user1, user2 }) => {
-    const room = await findRoom(user1, user2);
-    if (room.length == 0) {
-      await _query(
-        `INSERT INTO ChatRoom (user1, user2) VALUES (${user1},${user2});`
-      );
-      room = await findRoom(user1, user2);
-    }
-    socket.join(room);
-  });
-  socket.on("alert", (str) => {
-    console.log(str);
-  });
+// io.on("connection", (socket) => {
+//   console.log("connect");
+//   console.log("user connected: ", socket.id);
+//   //const user2 = res.locals.student_id;
+//   socket.on("joinRoom", async ({ user1, user2 }) => {
+//     const room = await findRoom(user1, user2);
+//     if (room.length == 0) {
+//       await _query(
+//         `INSERT INTO ChatRoom (user1, user2) VALUES (${user1},${user2});`
+//       );
+//       room = await findRoom(user1, user2);
+//     }
+//     socket.join(room);
+//   });
+//   socket.on("alert", (str) => {
+//     console.log(str);
+//   });
 
-  socket.on("chatMessage", async ({ msg, sender, receiver }) => {
-    const room = await findRoom(sender, receiver);
-    await _query(
-      `INSERT INTO Chat (room_id, sender, content) VALUES (${room}, ${sender}, '${msg}');`
-    );
-    io.to(room).emit("message", { sender, msg, time: moment() });
-  });
+//   socket.on("chatMessage", async ({ msg, sender, receiver }) => {
+//     const room = await findRoom(sender, receiver);
+//     await _query(
+//       `INSERT INTO Chat (room_id, sender, content) VALUES (${room}, ${sender}, '${msg}');`
+//     );
+//     io.to(room).emit("message", { sender, msg, time: moment() });
+//   });
 
-  socket.on("disconnect", () => {
-    console.log("user disconnected: ", socket.id);
-  });
-});
+//   socket.on("disconnect", () => {
+//     console.log("user disconnected: ", socket.id);
+//   });
+// });
 
 app.listen(API_PORT, API_HOST, () => {
   console.log(

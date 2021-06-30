@@ -5,6 +5,7 @@ const _query = require("../../database/db");
 const { findRoom } = require("./utils");
 
 module.exports = (app, io) => {
+  console.log("socket");
   io.on("connection", (socket) => {
     console.log("user connected: ", socket.id);
     //const user2 = res.locals.student_id;
