@@ -20,6 +20,7 @@ const middleware = require("./api/middleware/middleware");
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(middleware._log);
+app.use(cors());
 
 app.use(API_ROOT, auth);
 app.use(API_ROOT, post);
