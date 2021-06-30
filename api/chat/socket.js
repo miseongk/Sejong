@@ -7,7 +7,7 @@ const { findRoom } = require("./utils");
 module.exports = (app, io) => {
   io.on("connection", (socket) => {
     console.log("user connected: ", socket.id);
-
+    //const user2 = res.locals.student_id;
     socket.on("joinRoom", async ({ user1, user2 }) => {
       const room = await findRoom(user1, user2);
       if (room.length == 0) {
@@ -17,6 +17,9 @@ module.exports = (app, io) => {
         room = await findRoom(user1, user2);
       }
       socket.join(room);
+    });
+    socket.on("alert", (str) => {
+      console.log(str);
     });
 
     socket.on("chatMessage", async ({ msg, sender, receiver }) => {
