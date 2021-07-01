@@ -44,6 +44,11 @@ const uis_login = async (id, pw) => {
       const alert = await driver.switchTo().alert();
       await alert.accept();
     }
+    try {
+      await driver.wait(() => {
+        return false;
+      }, 1000);
+    } catch (err) {}
     const uis_id = await driver.findElement(By.id("id"));
     const uis_pw = await driver.findElement(By.id("password"));
     uis_id.clear();
@@ -82,7 +87,7 @@ const uis_login = async (id, pw) => {
       }, 2000);
     } catch (err) {}
   } catch (e) {
-    throw e;
+    return "failed";
   } finally {
     driver.quit();
   }
@@ -105,7 +110,6 @@ router.post("/signin", async (req, res) => {
     );
     //DB 추가
     if (query_response.data.length == 0) {
-      query_response.data.is_visited = "no";
       await _query(
         `INSERT INTO User (student_id, name, major) VALUES (${student_id}, '${login_result.name}', '${login_result.major}');`
       );
@@ -129,6 +133,8 @@ router.post("/signin", async (req, res) => {
         algorithm: "RS256",
       }
     );
+  } else if (login_result.message !== "Login success") {
+    query_response.message = "Try again.";
   }
   //로그인 실패
   else {
