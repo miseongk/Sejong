@@ -64,4 +64,42 @@ router.post("/mentoring/:post_id", middleware._auth, async (req, res) => {
   res.send(query_response);
 });
 
+// Get mentoring list
+router.get("/mentoring", middleware._auth, async (req, res) => {
+  let query_response = {};
+
+  const user = res.locals.student_id;
+  const page = req.query.page - 1;
+  const limit = 10;
+
+  try {
+    const mentoring = await _query(
+      `SELECT id, mentor, mentee, subject, start_date, end_date, time, day FROM Mentoring WHERE mentor = ${user} OR mentee = ${user} AND is_reviewed = 0 
+      ORDER BY created_at desc LIMIT ${page * limit}, ${limit};`
+    );
+    const today = new Date();
+    for (let i = 0; i < mentoring.length; i++) {
+      const mentor_name = await _query(
+        `SELECT name FROM User WHERE student_id = ${mentoring[i].mentor};`
+      );
+      const mentee_name = await _query(
+        `SELECT name FROM User WHERE student_id = ${mentoring[i].mentee};`
+      );
+      mentoring[i].mentor = mentor_name[0].name;
+      mentoring[i].mentee = mentee_name[0].name;
+      if (mentoring[i].end_date < today) {
+        mentoring[i].end = 1;
+      } else {
+        mentoring[i].end = 0;
+      }
+    }
+    query_response.data = mentoring;
+  } catch (error) {
+    res.status(400);
+    query_response.message = "Failed to get mentoring list.";
+  }
+
+  res.send(query_response);
+});
+
 module.exports = router;
