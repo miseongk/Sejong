@@ -102,6 +102,38 @@ router.get("/mentoring", middleware._auth, async (req, res) => {
   res.send(query_response);
 });
 
+// Get mentoring records
+router.get(
+  "/mentoring/record/:mentoring_id",
+  middleware._auth,
+  async (req, res) => {
+    let query_response = {};
+
+    const mentoring_id = await _query(
+      `SELECT id FROM Mentoring WHERE id = ${req.params.mentoring_id};`
+    );
+
+    if (mentoring_id.length == 0) {
+      res.status(400);
+      query_response.message = `Mentoring ID: '${req.params.mentoring_id}' doesn't exist.`;
+      return res.send(query_response);
+    }
+
+    try {
+      const records = await _query(
+        `SELECT r.id, r.date, r.content FROM Record as r JOIN Mentoring_Record as mr
+          ON mr.record_id = r.id AND mr.mentoring_id = ${mentoring_id[0].id};`
+      );
+      query_response.data = records;
+    } catch (error) {
+      res.status(400);
+      query_response.message = "Failed to get mentoring records.";
+    }
+
+    res.send(query_response);
+  }
+);
+
 // Write a mentoring record
 router.post(
   "/mentoring/record/:mentoring_id",
