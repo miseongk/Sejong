@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const _query = require("../../database/db");
-const middleware = require("../middleware/middleware");
+const middleware = require("../../utils/middleware");
 const { findRoom } = require("./utils");
 
 function date_descending(a, b) {
