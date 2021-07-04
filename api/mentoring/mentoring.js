@@ -102,4 +102,43 @@ router.get("/mentoring", middleware._auth, async (req, res) => {
   res.send(query_response);
 });
 
+// Write a mentoring record
+router.post(
+  "/mentoring/record/:mentoring_id",
+  middleware._auth,
+  async (req, res) => {
+    let query_response = {};
+
+    const date = req.body.date;
+    const content = req.body.content;
+    const mentoring_id = await _query(
+      `SELECT id FROM Mentoring WHERE id = ${req.params.mentoring_id};`
+    );
+
+    if (mentoring_id.length == 0) {
+      res.status(400);
+      query_response.message = `Mentoring ID: '${req.params.mentoring_id}' doesn't exist.`;
+      return res.send(query_response);
+    }
+
+    try {
+      await _query(
+        `INSERT INTO Record (date, content) VALUES ('${date}' , '${content}');`
+      );
+      const record = await _query(
+        `SELECT * FROM Record WHERE id IN (SELECT MAX(id) FROM Record);`
+      );
+      await _query(
+        `INSERT INTO Mentoring_Record (mentoring_id, record_id) VALUES (${mentoring_id[0].id}, ${record[0].id});`
+      );
+      query_response.data = record;
+    } catch (error) {
+      res.status(400);
+      query_response.message = "Failed to post a mentoring record.";
+    }
+
+    res.send(query_response);
+  }
+);
+
 module.exports = router;
