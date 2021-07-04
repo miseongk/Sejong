@@ -141,4 +141,37 @@ router.post(
   }
 );
 
+// Update a record
+router.put(
+  "/mentoring/record/:record_id",
+  middleware._auth,
+  async (req, res) => {
+    let query_response = {};
+
+    const date = req.body.date;
+    const content = req.body.content;
+    const record_id = await _query(
+      `SELECT id FROM Record WHERE id = ${req.params.record_id};`
+    );
+
+    if (record_id.length == 0) {
+      res.status(400);
+      query_response.message = `Record ID: '${req.params.record_id}' doesn't exist.`;
+      return res.send(query_response);
+    }
+
+    try {
+      await _query(
+        `UPDATE Record SET date = '${date}', content = '${content}' WHERE id = ${record_id[0].id};`
+      );
+      query_response.message = `Record ID: '${record_id[0].id}' has been updated successfully.`;
+    } catch (error) {
+      res.status(400);
+      query_response.message = "Failed to update a record.";
+    }
+
+    res.send(query_response);
+  }
+);
+
 module.exports = router;
