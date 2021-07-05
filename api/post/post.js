@@ -130,7 +130,7 @@ router.get("/post/:role/list", middleware._auth, async (req, res) => {
       );
     } else {
       posts = await _query(
-        `SELECT p.*, u.reputation FROM Post as p JOIN User as u ON p.student_id = u.student_id AND p.role=1
+        `SELECT p.*, u.reputation FROM Post as p JOIN User as u ON p.student_id = u.student_id AND p.role=1 AND p.is_matched = 0
         ORDER BY u.reputation desc LIMIT ${page * limit}, ${limit};`
       );
     }
