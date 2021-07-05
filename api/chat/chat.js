@@ -33,6 +33,9 @@ router.get("/chat", middleware._auth, async (req, res) => {
         `SELECT content, time FROM Chat WHERE room_id=${chatRoom[i].room_id}
           ORDER BY time desc LIMIT 0,1;`
       );
+      if (chatList.length == 0) {
+        continue;
+      }
       const is_matched = await _query(
         `SELECT is_matched FROM Post WHERE id IN (SELECT post FROM ChatRoom WHERE room_id=${chatRoom[i].room_id});`
       );
