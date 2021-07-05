@@ -3,6 +3,7 @@ const router = express.Router();
 
 const _query = require("../../database/db");
 const middleware = require("../../utils/middleware");
+const { setDateTZ } = require("../../utils/utils");
 
 // Match mentoring
 router.post("/mentoring/:post_id", middleware._auth, async (req, res) => {
@@ -104,7 +105,7 @@ router.get("/mentoring", middleware._auth, async (req, res) => {
 
 // Get mentoring records
 router.get(
-  "/mentoring/record/:mentoring_id",
+  "/mentoring/:mentoring_id/record",
   middleware._auth,
   async (req, res) => {
     let query_response = {};
@@ -136,7 +137,7 @@ router.get(
 
 // Write a mentoring record
 router.post(
-  "/mentoring/record/:mentoring_id",
+  "/mentoring/:mentoring_id/record",
   middleware._auth,
   async (req, res) => {
     let query_response = {};
@@ -175,7 +176,7 @@ router.post(
 
 // Update a record
 router.put(
-  "/mentoring/record/:record_id",
+  "/mentoring/:record_id/record",
   middleware._auth,
   async (req, res) => {
     let query_response = {};
