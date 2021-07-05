@@ -60,7 +60,6 @@ io.on("connection", (socket) => {
   socket.on("chatMessage", async ({ msg, sender, receiver, post }) => {
     const room = await findRoom(sender, receiver, post);
     const room_id = room[0].room_id;
-    socket.join(room);
     await _query(
       `INSERT INTO Chat (room_id, sender, content) VALUES (${room_id}, ${sender}, '${msg}');`
     );
