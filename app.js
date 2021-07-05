@@ -63,7 +63,9 @@ io.on("connection", (socket) => {
     await _query(
       `INSERT INTO Chat (room_id, sender, content) VALUES (${room_id}, ${sender}, '${msg}');`
     );
-    io.to(room_id).emit("receiveMsg", { sender, msg, time: moment() });
+    socket.broadcast
+      .to(room_id)
+      .emit("receiveMsg", { sender, msg, time: moment() });
     console.log("Send Message!");
   });
 
