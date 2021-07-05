@@ -71,6 +71,7 @@ router.get("/chat", middleware._auth, async (req, res) => {
   } catch (error) {
     res.status(400);
     query_response.message = "Failed to get chatting lists.";
+    console.log(error);
   }
 
   res.send(query_response);
