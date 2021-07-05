@@ -29,13 +29,6 @@ router.get("/chat", middleware._auth, async (req, res) => {
       return res.send(query_response);
     }
     for (let i = 0; i < chatRoom.length; i++) {
-      if (chatRoom[i].user1 === user) {
-        chatRoom[i].user1 = user;
-        chatRoom[i].user2 = chatRoom[i].user2;
-      } else {
-        chatRoom[i].user1 = chatRoom[i].user2;
-        chatRoom[i].user2 = user;
-      }
       const chatList = await _query(
         `SELECT content, time FROM Chat WHERE room_id=${chatRoom[i].room_id}
           ORDER BY time desc LIMIT 0,1;`
