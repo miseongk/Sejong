@@ -1,9 +1,6 @@
 const express = require("express");
 const app = express();
-//const http = require("http");
-//const server = http.createServer(app);
 const socketio = require("socket.io");
-//const io = socketio(server);
 const bodyparser = require("body-parser");
 const cors = require("cors");
 
@@ -42,16 +39,6 @@ app.use(API_ROOT, chat);
 app.use(API_ROOT, mentoring);
 app.use(API_ROOT, search);
 
-// io.on("connection", (socket) => {
-//   console.log("user connected: ", socket.id);
-// });
-// io.emit("channel2", "new channel");
-// io.on("channel2", (obj) => {
-//   console.log("Object from RN app", obj);
-// });
-
-//require("./api/chat/socket")(app, io);
-
 io.on("connection", (socket) => {
   console.log("user connected: ", socket.id);
 
@@ -68,7 +55,6 @@ io.on("connection", (socket) => {
       room = room[0].room_id;
     }
     socket.join(room);
-    console.log("Join Room!");
   });
 
   socket.on("chatMessage", async ({ msg, sender, receiver, post }) => {
@@ -77,7 +63,7 @@ io.on("connection", (socket) => {
     await _query(
       `INSERT INTO Chat (room_id, sender, content) VALUES (${room_id}, ${sender}, '${msg}');`
     );
-    io.to(room).emit("message", { sender, msg, time: moment() });
+    io.to(room).emit("receiveMsg", { sender, msg, time: moment() });
     console.log("Send Message!");
   });
 
