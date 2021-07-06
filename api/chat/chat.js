@@ -46,9 +46,10 @@ router.get("/chat", middleware._auth, async (req, res) => {
         chatRoom[i].is_matched = is_matched[0].is_matched;
         // role, subject, content
         const post_info = await _query(
-          `SELECT id, name, role, subject, content FROM Post WHERE id IN (SELECT post FROM ChatRoom WHERE room_id=${chatRoom[i].room_id});`
+          `SELECT id, student_id, name, role, subject, content FROM Post WHERE id IN (SELECT post FROM ChatRoom WHERE room_id=${chatRoom[i].room_id});`
         );
         chatRoom[i].post_id = post_info[0].id;
+        chatRoom[i].post_student_id = post_info[0].student_id;
         chatRoom[i].post_name = post_info[0].name;
         if (post_info[0].role == 1) {
           chatRoom[i].role = "멘토";
