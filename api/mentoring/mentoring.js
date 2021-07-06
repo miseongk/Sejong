@@ -212,4 +212,33 @@ router.put(
   }
 );
 
+// Delete a record
+router.delete(
+  "/mentoring/:record_id/record",
+  middleware._auth,
+  async (req, res) => {
+    let query_response = {};
+
+    const record = await _query(
+      `SELECT * FROM Record WHERE id = ${req.params.record_id};`
+    );
+
+    if (record.length == 0) {
+      res.status(400);
+      query_response.message = `Record ID: '${req.params.record_id}' doesn't exist.`;
+      return res.send(query_response);
+    }
+
+    try {
+      await _query(`DELETE FROM Record WHERE id = ${req.params.record_id};`);
+      query_response.message = `Record ID: '${req.params.record_id}' has been deleted successfully.`;
+    } catch (error) {
+      res.status(400);
+      query_response.message = "Failed to delete a record.";
+    }
+
+    res.send(query_response);
+  }
+);
+
 module.exports = router;
