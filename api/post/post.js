@@ -3,6 +3,7 @@ const router = express.Router();
 
 const _query = require("../../database/db");
 const middleware = require("../../utils/middleware");
+const { setDateTZ } = require("../../utils/utils");
 
 // Create a post
 router.post("/post", middleware._auth, async (req, res) => {
@@ -128,11 +129,19 @@ router.get("/post/:role/list", middleware._auth, async (req, res) => {
         `SELECT * FROM Post WHERE role = ${role} AND is_matched = 0 
         ORDER BY created_at desc LIMIT ${page * limit}, ${limit};`
       );
+      for (let i = 0; i < posts.length; i++) {
+        posts[i].start_date = setDateTZ(posts[i].start_date);
+        posts[i].end_date = setDateTZ(posts[i].end_date);
+      }
     } else {
       posts = await _query(
         `SELECT p.*, u.reputation FROM Post as p JOIN User as u ON p.student_id = u.student_id AND p.role=1 AND p.is_matched = 0
         ORDER BY u.reputation desc LIMIT ${page * limit}, ${limit};`
       );
+      for (let i = 0; i < posts.length; i++) {
+        posts[i].start_date = setDateTZ(posts[i].start_date);
+        posts[i].end_date = setDateTZ(posts[i].end_date);
+      }
     }
     query_response.data = posts;
   } catch (error) {

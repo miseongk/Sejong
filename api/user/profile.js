@@ -3,6 +3,7 @@ const router = express.Router();
 
 const _query = require("../../database/db");
 const middleware = require("../../utils/middleware");
+const { setDateTZ } = require("../../utils/utils");
 
 // Set profile(gender, bio)
 router.put("/profile/:student_id", middleware._auth, async (req, res) => {
@@ -68,6 +69,10 @@ router.get("/profile/:student_id/posts", middleware._auth, async (req, res) => {
     const posts = await _query(
       `SELECT * FROM Post WHERE student_id = ${req.params.student_id} ORDER BY updated_at desc;`
     );
+    for (let i = 0; i < posts.length; i++) {
+      posts[i].start_date = setDateTZ(posts[i].start_date);
+      posts[i].end_date = setDateTZ(posts[i].end_date);
+    }
     query_response.data = posts;
   } catch (error) {
     res.status(400);

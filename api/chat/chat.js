@@ -3,6 +3,7 @@ const router = express.Router();
 
 const _query = require("../../database/db");
 const middleware = require("../../utils/middleware");
+const { setDateTZ } = require("../../utils/utils");
 const { findRoom } = require("./utils");
 
 function date_descending(a, b) {
@@ -17,7 +18,7 @@ router.get("/chat", middleware._auth, async (req, res) => {
 
   const user = res.locals.student_id;
   const page = req.query.page - 1;
-  const limit = 10;
+  const limit = 20;
 
   try {
     let chatRoom = await _query(
@@ -50,7 +51,7 @@ router.get("/chat", middleware._auth, async (req, res) => {
         chatRoom[i].user1_name = user1_name[0].name;
         chatRoom[i].user2_name = user2_name[0].name;
         chatRoom[i].msg = chatList[0].content;
-        chatRoom[i].time = chatList[0].time;
+        chatRoom[i].time = setDateTZ(chatList[0].time);
         chatRoom[i].is_matched = is_matched[0].is_matched;
         // role, subject, content
         const post_info = await _query(
@@ -94,18 +95,29 @@ router.get("/chat/:post_id/:student_id", middleware._auth, async (req, res) => {
   let query_response = {};
 
   const page = req.query.page - 1;
-  const limit = 10;
+  const limit = 20;
   const user1 = res.locals.student_id;
   const user2 = req.params.student_id;
   const post = req.params.post_id;
   const room = await findRoom(user1, user2, post);
-  const room_id = room[0].room_id;
+  let room_id = 0;
+  if (room.length == 0) {
+    res.status(400);
+    query_response.message = "This chatRoom doesn't exist.";
+    return res.send(query_response);
+  } else {
+    room_id = room[0].room_id;
+  }
 
   try {
-    query_response.data = await _query(
+    const msg = await _query(
       `SELECT id, sender, content, time, is_checked FROM Chat WHERE room_id=${room_id} 
       LIMIT ${page * limit}, ${limit};`
     );
+    for (let i = 0; i < msg.length; i++) {
+      msg[i].time = setDateTZ(msg[i].time);
+    }
+    query_response.data = msg;
   } catch (error) {
     res.status(400);
     query_response.message = "Failed to get messages.";

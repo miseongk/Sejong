@@ -88,6 +88,8 @@ router.get("/mentoring", middleware._auth, async (req, res) => {
       );
       mentoring[i].mentor = mentor_name[0].name;
       mentoring[i].mentee = mentee_name[0].name;
+      mentoring[i].start_date = setDateTZ(mentoring[i].start_date);
+      mentoring[i].end_date = setDateTZ(mentoring[i].end_date);
       if (mentoring[i].end_date < today) {
         mentoring[i].end = 1;
       } else {
@@ -125,6 +127,9 @@ router.get(
         `SELECT r.id, r.date, r.content FROM Record as r JOIN Mentoring_Record as mr
           ON mr.record_id = r.id AND mr.mentoring_id = ${mentoring_id[0].id};`
       );
+      for (let i = 0; i < records.length; i++) {
+        records[i].date = setDateTZ(records[i].date);
+      }
       query_response.data = records;
     } catch (error) {
       res.status(400);
