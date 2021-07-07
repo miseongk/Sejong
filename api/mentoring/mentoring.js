@@ -264,7 +264,6 @@ router.post(
     let student_id = 0; // user가 평가할 사람 학번
 
     try {
-      //user가 멘토인지 멘티인지 확인 -> 반대편 role 알아내서 그 사람 review에 저장 -> is_reviewed_role = 1
       if (mentoring[0].mentor == user) {
         role = "mentee";
         student_id = mentoring[0].mentee;
@@ -275,55 +274,43 @@ router.post(
       const is_exist = await _query(
         `SELECT id FROM Review WHERE student_id = ${student_id};`
       );
-      if (is_exist.length == 0) {
-        await _query(`INSERT INTO Review (student_id) VALUES (${student_id});`);
-      }
       for (let i = 0; i < review_arr.length; i++) {
+        await _query(
+          `INSERT INTO Review (student_id, review_num) VALUES (${student_id}, ${review_arr[i]});`
+        );
         switch (review_arr[i]) {
           case 1:
-            await _query(
-              `UPDATE Review SET ${role}_1 = ${role}_1 + 1 WHERE student_id = ${student_id};`
-            );
+          case 11:
             await _query(
               `UPDATE User SET reputation = reputation + 0.1 WHERE student_id = ${student_id};`
             );
             break;
           case 2:
-            await _query(
-              `UPDATE Review SET ${role}_2 = ${role}_2 + 1 WHERE student_id = ${student_id};`
-            );
+          case 12:
             await _query(
               `UPDATE User SET reputation = reputation + 0.1 WHERE student_id = ${student_id};`
             );
             break;
           case 3:
-            await _query(
-              `UPDATE Review SET ${role}_3 = ${role}_3 + 1 WHERE student_id = ${student_id};`
-            );
+          case 13:
             await _query(
               `UPDATE User SET reputation = reputation + 0.1 WHERE student_id = ${student_id};`
             );
             break;
           case 4:
-            await _query(
-              `UPDATE Review SET ${role}_4 = ${role}_4 + 1 WHERE student_id = ${student_id};`
-            );
+          case 14:
             await _query(
               `UPDATE User SET reputation = reputation - 0.1 WHERE student_id = ${student_id};`
             );
             break;
           case 5:
-            await _query(
-              `UPDATE Review SET ${role}_5 = ${role}_5 + 1 WHERE student_id = ${student_id};`
-            );
+          case 15:
             await _query(
               `UPDATE User SET reputation = reputation - 0.1 WHERE student_id = ${student_id};`
             );
             break;
           case 6:
-            await _query(
-              `UPDATE Review SET ${role}_6 = ${role}_6 + 1 WHERE student_id = ${student_id};`
-            );
+          case 16:
             await _query(
               `UPDATE User SET reputation = reputation - 0.1 WHERE student_id = ${student_id};`
             );
