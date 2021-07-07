@@ -82,6 +82,37 @@ router.get("/profile/:student_id/posts", middleware._auth, async (req, res) => {
   res.send(query_response);
 });
 
+// Get a specific user's reviews
+router.get(
+  "/profile/:student_id/reviews",
+  middleware._auth,
+  async (req, res) => {
+    let query_response = {};
+    let review = {};
+    const student_id = req.params.student_id;
+    try {
+      const mentor_reviews = await _query(
+        `SELECT id, review_num, count(review_num) as cnt FROM Review 
+          WHERE student_id = ${student_id} AND review_num <10
+            GROUP BY review_num ORDER BY cnt desc LIMIT 0,3;`
+      );
+      const mentee_reviews = await _query(
+        `SELECT id, review_num, count(review_num) as cnt FROM Review
+          WHERE student_id = ${student_id} AND review_num >10
+            GROUP BY review_num ORDER BY cnt desc LIMIT 0,3;`
+      );
+      review.mentor = mentor_reviews;
+      review.mentee = mentee_reviews;
+      query_response.data = review;
+    } catch (error) {
+      res.status(400);
+      query_response.message = `Failed to get ${req.params.student_id}'s reviews.`;
+    }
+
+    res.send(query_response);
+  }
+);
+
 // Set bio
 router.put("/profile/:student_id/bio", middleware._auth, async (req, res) => {
   let query_response = {};
