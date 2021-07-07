@@ -75,7 +75,7 @@ router.get("/mentoring", middleware._auth, async (req, res) => {
 
   try {
     const mentoring = await _query(
-      `SELECT id, mentor, mentee, subject, start_date, end_date, time, day FROM Mentoring WHERE mentor = ${user} OR mentee = ${user} AND is_reviewed = 0 
+      `SELECT id, mentor, mentee, subject, start_date, end_date, time, day FROM Mentoring WHERE (mentor = ${user} OR mentee = ${user}) AND (is_reviewed_mentor = 0 OR is_reviewed_mentee = 0) 
       ORDER BY created_at desc LIMIT ${page * limit}, ${limit};`
     );
     const today = new Date();
@@ -235,6 +235,109 @@ router.delete(
     } catch (error) {
       res.status(400);
       query_response.message = "Failed to delete a record.";
+    }
+
+    res.send(query_response);
+  }
+);
+
+// Review mentor or mentee
+router.post(
+  "/mentoring/:mentoring_id/review",
+  middleware._auth,
+  async (req, res) => {
+    let query_response = {};
+
+    const user = res.locals.student_id;
+    const review_arr = req.body.review;
+    const mentoring_id = req.params.mentoring_id;
+    const mentoring = await _query(
+      `SELECT * FROM Mentoring WHERE id = ${mentoring_id};`
+    );
+    if (mentoring.length == 0) {
+      res.status(400);
+      query_response.message = `Mentoring ID: '${req.params.record_id}' doesn't exist.`;
+      return res.send(query_response);
+    }
+
+    let role = ""; // user가 평가할 사람 role
+    let student_id = 0; // user가 평가할 사람 학번
+
+    try {
+      //user가 멘토인지 멘티인지 확인 -> 반대편 role 알아내서 그 사람 review에 저장 -> is_reviewed_role = 1
+      if (mentoring[0].mentor == user) {
+        role = "mentee";
+        student_id = mentoring[0].mentee;
+      } else {
+        role = "mentor";
+        student_id = mentoring[0].mentor;
+      }
+      const is_exist = await _query(
+        `SELECT id FROM Review WHERE student_id = ${student_id};`
+      );
+      if (is_exist.length == 0) {
+        await _query(`INSERT INTO Review (student_id) VALUES (${student_id});`);
+      }
+      for (let i = 0; i < review_arr.length; i++) {
+        switch (review_arr[i]) {
+          case 1:
+            await _query(
+              `UPDATE Review SET ${role}_1 = ${role}_1 + 1 WHERE student_id = ${student_id};`
+            );
+            await _query(
+              `UPDATE User SET reputation = reputation + 0.1 WHERE student_id = ${student_id};`
+            );
+            break;
+          case 2:
+            await _query(
+              `UPDATE Review SET ${role}_2 = ${role}_2 + 1 WHERE student_id = ${student_id};`
+            );
+            await _query(
+              `UPDATE User SET reputation = reputation + 0.1 WHERE student_id = ${student_id};`
+            );
+            break;
+          case 3:
+            await _query(
+              `UPDATE Review SET ${role}_3 = ${role}_3 + 1 WHERE student_id = ${student_id};`
+            );
+            await _query(
+              `UPDATE User SET reputation = reputation + 0.1 WHERE student_id = ${student_id};`
+            );
+            break;
+          case 4:
+            await _query(
+              `UPDATE Review SET ${role}_4 = ${role}_4 + 1 WHERE student_id = ${student_id};`
+            );
+            await _query(
+              `UPDATE User SET reputation = reputation - 0.1 WHERE student_id = ${student_id};`
+            );
+            break;
+          case 5:
+            await _query(
+              `UPDATE Review SET ${role}_5 = ${role}_5 + 1 WHERE student_id = ${student_id};`
+            );
+            await _query(
+              `UPDATE User SET reputation = reputation - 0.1 WHERE student_id = ${student_id};`
+            );
+            break;
+          case 6:
+            await _query(
+              `UPDATE Review SET ${role}_6 = ${role}_6 + 1 WHERE student_id = ${student_id};`
+            );
+            await _query(
+              `UPDATE User SET reputation = reputation - 0.1 WHERE student_id = ${student_id};`
+            );
+            break;
+        }
+      }
+      await _query(
+        `UPDATE Mentoring SET is_reviewed_${role} = 1 WHERE id = ${mentoring_id};`
+      );
+
+      query_response.message = "Your review has been successfully registered.";
+    } catch (error) {
+      res.status(400);
+      query_response.message = "Failed to review.";
     }
 
     res.send(query_response);
