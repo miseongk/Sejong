@@ -92,12 +92,12 @@ router.get(
     const student_id = req.params.student_id;
     try {
       const mentor_reviews = await _query(
-        `SELECT id, review_num, count(review_num) as cnt FROM Review 
+        `SELECT review_num, count(review_num) as cnt FROM Review 
           WHERE student_id = ${student_id} AND review_num <10
             GROUP BY review_num ORDER BY cnt desc LIMIT 0,3;`
       );
       const mentee_reviews = await _query(
-        `SELECT id, review_num, count(review_num) as cnt FROM Review
+        `SELECT review_num, count(review_num) as cnt FROM Review
           WHERE student_id = ${student_id} AND review_num >10
             GROUP BY review_num ORDER BY cnt desc LIMIT 0,3;`
       );
