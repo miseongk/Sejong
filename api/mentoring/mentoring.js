@@ -55,6 +55,12 @@ router.post("/mentoring/:post_id", middleware._auth, async (req, res) => {
       `SELECT * FROM Mentoring WHERE id IN (SELECT MAX(id) FROM Mentoring);`
     );
     await _query(`UPDATE Post SET is_matched = 1 WHERE id = ${post_id};`);
+    await _query(
+      `UPDATE User SET mentor_num = mentor_num + 1 WHERE student_id = ${mentor[0].student_id};`
+    );
+    await _query(
+      `UPDATE User SET point = point + 100 WHERE student_id = ${mentor[0].student_id} AND mentor_num >0 AND mentor_num % 3 = 0;`
+    );
 
     query_response.data = mentoring;
   } catch (error) {

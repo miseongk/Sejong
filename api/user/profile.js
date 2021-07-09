@@ -37,7 +37,7 @@ router.get("/profile/:student_id", middleware._auth, async (req, res) => {
 
   try {
     const profile = await _query(
-      `SELECT student_id, name, major, gender, bio, reputation FROM User WHERE student_id = ${req.params.student_id};`
+      `SELECT student_id, name, major, gender, bio, reputation, point FROM User WHERE student_id = ${req.params.student_id};`
     );
     if (profile.length == 0) {
       res.status(400);
