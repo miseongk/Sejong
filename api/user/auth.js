@@ -60,7 +60,7 @@ const uis_login = async (id, pw) => {
     try {
       await driver.wait(() => {
         return false;
-      }, 2000);
+      }, 1000);
     } catch (err) {}
 
     //학과, 이름 가져오기
@@ -84,7 +84,7 @@ const uis_login = async (id, pw) => {
     try {
       await driver.wait(() => {
         return false;
-      }, 2000);
+      }, 1000);
     } catch (err) {}
   } catch (e) {
     return "failed";
