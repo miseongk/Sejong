@@ -47,7 +47,7 @@ const uis_login = async (id, pw) => {
     try {
       await driver.wait(() => {
         return false;
-      }, 1000);
+      }, 2000);
     } catch (err) {}
     const uis_id = await driver.findElement(By.id("id"));
     const uis_pw = await driver.findElement(By.id("password"));
@@ -60,7 +60,7 @@ const uis_login = async (id, pw) => {
     try {
       await driver.wait(() => {
         return false;
-      }, 1000);
+      }, 2000);
     } catch (err) {}
 
     //학과, 이름 가져오기
