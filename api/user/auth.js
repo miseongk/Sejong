@@ -101,29 +101,49 @@ router.post("/signin", async (req, res) => {
   const student_id = req.body.student_id;
   const password = req.body.password;
 
-  // if (
-  //   student_id == 18011531 ||
-  //   student_id == 18011564 ||
-  //   student_id == 18011599
-  // ) {
-  //   query_response.data = await _query(
-  //     `SELECT student_id, name, major, gender FROM User WHERE student_id=${student_id};`
-  //   );
-  //   query_response.token = jwt.sign(
-  //     {
-  //       student_id: student_id,
-  //       name: query_response.data.name,
-  //     },
-  //     process.env.SECRET_KEY,
-  //     {
-  //       expiresIn: "12h",
-  //     },
-  //     {
-  //       algorithm: "RS256",
-  //     }
-  //   );
-  //   return res.send(query_response);
-  // }
+  if (
+    student_id == 18011531 ||
+    student_id == 18011564 ||
+    student_id == 18011599
+  ) {
+    query_response.data = await _query(
+      `SELECT student_id, name, major, gender FROM User WHERE student_id=${student_id};`
+    );
+    if (query_response.data.length == 0) {
+      if (student_id == 18011531) {
+        await _query(
+          `INSERT INTO User (student_id, name, major) VALUES (${student_id}, '김미성', '컴퓨터공학과');`
+        );
+      }
+      if (student_id == 18011564) {
+        await _query(
+          `INSERT INTO User (student_id, name, major) VALUES (${student_id}, '변영화', '컴퓨터공학과');`
+        );
+      }
+      if (student_id == 18011599) {
+        await _query(
+          `INSERT INTO User (student_id, name, major) VALUES (${student_id}, '김예리', '컴퓨터공학과');`
+        );
+      }
+      query_response.data = await _query(
+        `SELECT student_id, name, major, gender FROM User WHERE student_id=${student_id};`
+      );
+    }
+    query_response.token = jwt.sign(
+      {
+        student_id: student_id,
+        name: query_response.data.name,
+      },
+      process.env.SECRET_KEY,
+      {
+        expiresIn: "12h",
+      },
+      {
+        algorithm: "RS256",
+      }
+    );
+    return res.send(query_response);
+  }
   //포탈 로그인
   const login_result = await uis_login(student_id, password);
   //로그인 성공
