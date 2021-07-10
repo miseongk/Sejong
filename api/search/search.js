@@ -14,7 +14,7 @@ router.get("/search", middleware._auth, async (req, res) => {
 
   try {
     const result = await _query(
-      `SELECT * FROM Post WHERE name LIKE '%${search}%' OR subject LIKE '%${search}%'
+      `SELECT * FROM Post WHERE name LIKE '%${search}%' OR subject LIKE '%${search}%' AND is_matched = 0
       ORDER BY created_at desc LIMIT ${page * limit}, ${limit};`
     );
     if (result.length == 0) {
