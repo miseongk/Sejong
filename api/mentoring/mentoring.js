@@ -96,7 +96,8 @@ router.get("/mentoring", middleware._auth, async (req, res) => {
       mentoring[i].mentee = mentee_name[0].name;
       mentoring[i].start_date = setDateTZ(mentoring[i].start_date);
       mentoring[i].end_date = setDateTZ(mentoring[i].end_date);
-      if (mentoring[i].end_date < today) {
+      const end_d = mentoring[i].end_date;
+      if (new Date(end_d.setDate(end_d.getDate() + 1)) < today) {
         mentoring[i].end = 1;
       } else {
         mentoring[i].end = 0;
