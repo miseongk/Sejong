@@ -102,6 +102,7 @@ router.get("/mentoring", middleware._auth, async (req, res) => {
       } else {
         mentoring[i].end = 0;
       }
+      mentoring[i].end_date = new Date(end_d.setDate(end_d.getDate() - 1));
     }
     query_response.data = mentoring;
   } catch (error) {
