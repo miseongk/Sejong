@@ -2,7 +2,7 @@
 
 This is the backend repository of Mentors.
 
-(Frontend repository 👉 )
+(Frontend repository 👉 https://github.com/byhhh2/MentoringApp )
 
 ## Dev Stack
 
